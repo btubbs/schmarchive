@@ -1,0 +1,93 @@
+body {
+  background-color: #2e2e2e;
+  font-family: 'Droid Sans', arial, serif;
+  font-size: 15px;
+}
+body a { color: #0ca2ff; }
+#header {
+  background-color: #151515;
+  color: white;
+  padding: 10px;
+}
+#header h1 { margin: 0px; }
+#header a {
+  font-style: italic;
+  font-size: 11px;
+}
+#header #silklink {
+  float: right;
+  position: relative;
+  bottom: -10px;
+}
+#header #silklink a {
+  font-style: italic;
+  font-size: 15px;
+}
+#header .pagetitle {
+  font-weight: bold;
+  font-size: 25px;
+}
+#sitelist { color: #eeeeee; }
+#sitelist td {
+  padding: 10px;
+  border: 10px solid #2e2e2e;
+  background-color: #444444;
+  vertical-align: middle;
+}
+#sitelist .sitestatus {
+  text-align: center;
+  border-right: 0px none #2e2e2e;
+  font-weight: bold;
+}
+#sitelist .running { background-color: green; }
+#sitelist .stopped { background-color: #bbb31b; }
+#sitelist .fatal { background-color: red; }
+#sitelist .sitename {
+  text-align: right;
+  background-color: #2e2e2e;
+  font-size: 25px;
+}
+#sitelist .sitedesc {
+  font-size: 11px;
+  border-left: 0px none #2e2e2e;
+}
+#sitelist .sitelink { font-size: 10px; }
+#sitelist .sitelogs { font-size: 11px; }
+#sitelist .sitelogs table { margin-bottom: 0px; }
+#sitelist .sitelogs table td {
+  border: 0px none #2e2e2e;
+  padding: 2px;
+}
+#sitelist .siteactions input {
+  font-size: 9px;
+  display: inline;
+}
+#sitelist form { display: inline; }
+#loginform td {
+  padding: 10px;
+  vertical-align: middle;
+}
+#loginform td:first-child { text-align: right; }
+#loginform label {
+  color: white;
+  background-color: #2e2e2e;
+  font-size: 25px;
+}
+#loginform input { font-size: 25px; }
+#loginform input[type="text"] { border: 0px white none; }
+#loginform input[type="password"] { border: 0px white none; }
+#loginform input[type="submit"] {
+  color: #2e2e2e;
+  text-shadow: white 1px 1px 0px;
+  font-family: 'Droid Sans', arial, serif;
+}
+.loginlink {
+  font-size: 25px;
+  color: white;
+  margin: 10px 0 0 10px;
+}
+.form_error {
+  color: orange;
+  font-size: 20px;
+  margin: 10px 0 0 10px;
+}

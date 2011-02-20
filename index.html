@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Inventory Thing</title>
+    <link href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold&amp;subset=latin" rel="stylesheet" type="text/css"> 
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+
+<script id="box_template" type="text/html">
+    <h4>${objname}</h4>
+    <ul class="inv_box" id="${objkey}">
+    </ul>
+</script>
+
+<script id="item_template" type="text/html">
+    <li class="{{if name.charAt(0) === '.'}} hidden invisible{{/if}}"><span class="inv_item ${type}">${name}</span></li>
+</script>
+
+<script id="child_template" type="text/html">
+    <li><span class="inv_child">${name}: ${url}</span></li>
+</script>
+
+<script id="welcome_template" type="text/html">Hello ${username},</script>
+
+<script type="text/javascript" src="schmarchive.js"></script>   
+<link rel="stylesheet" type="text/css" href="reset.css" />
+<link rel="stylesheet" type="text/css" href="schmarchive.css" />
+</head>
+<body>
+<div id="header">
+    <h2>Schmarchive</h2>
+</div>
+<div id="maincontent">
+    <h2 id="welcome">Hello,</h2>
+    Below you should see the contents of the prim you clicked, as well as a list of its sub-schmarchives.  Click any of the items in order to have it delivered to you.  Click any of the children in order to see their contents.
+    <div id="inv_container"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+.inv_item {
+    padding-left: 21px;
+    background-repeat: no-repeat;
+}
+.texture {
+    background-image: url('texture.png');
+}
+.sound {
+    background-image: url('sound.png');
+}
+.landmark {
+    background-image: url('landmark.png');
+}
+.clothing {
+    background-image: url('clothing.png');
+}
+.object {
+    background-image: url('object.png');
+}
+.notecard {
+    background-image: url('notecard.png');
+}
+.script {
+    background-image: url('script.png');
+}
+.bodypart {
+    background-image: url('bodypart.png');
+}
+.animation {
+    background-image: url('animation.png');
+}
+.clothing {
+    background-image: url('clothing.png');
+}
+.gesture {
+    background-image: url('gesture.png');
+}
+
+.inv_box li {
+    padding: 2px 0;
+    list-style: none;
+}
+
+li.invisible {
+    display: none;
+}
+
+#header {
+    background-color: black;
+    color: white;
+}
+body {
+    background-color: #2e2e2e;
+    font-family: 'Droid Sans', arial, serif;
+    font-size: 15px;
+    color: white;
+}
+
+a{
+    color: #0CA2FF;
+}
+
+#header {
+    background-color: #151515;
+    color: white;
+    padding: 10px;
+
+}
+#header h1 {
+    margin: 0px;
+}
+#header h2 {
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#welcome {
+    font-size: 40px;
+}
+
+#maincontent {
+    padding: 10px;
+}
+
+#inv_container {
+    margin-top: 20px;
+    -moz-box-shadow:inset 0 0 5px #000000;
+    -webkit-box-shadow:inset 0 0 5px #000000;
+    box-shadow:inset 0 0 5px #000000;
+    background: white;
+    color: black;
+    padding: 5px;
+}
+
+#inv_container h4 {
+    margin-bottom: 7px;
+}
