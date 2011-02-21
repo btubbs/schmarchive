@@ -15,14 +15,39 @@
 </script>
 
 <script id="item_template" type="text/html">
-    <li class="{{if name.charAt(0) === '.'}} hidden invisible{{/if}}"><span class="inv_item ${type}">${name}</span></li>
+    <li class="item_li{{if name.charAt(0) === '.'}} hidden invisible{{/if}}">
+        <span id="${key}" class="inv_item ${type}">${name}</span>
+    </li>
 </script>
 
 <script id="child_template" type="text/html">
     <li><span class="inv_child">${name}: ${url}</span></li>
 </script>
 
-<script id="welcome_template" type="text/html">Hello ${username},</script>
+<script id="av_template" type="text/html">
+<h4 class="displayname">${displayname}</h4>
+<img class="thumb" src="http://my-secondlife.s3.amazonaws.com/users/${username}/sl_image.png" />
+<span class="username">${username}</span>
+<p>You are currently browsing as ${username}.  All items will be sent to this account.</p>
+</script>
+<script id="info_item_template" type="text/html">
+<div class="item_info">
+    <h4 class="inv_item ${type}">${name}</h4>
+    <div style="clear: both;"></div>
+    {{if thumb}}
+    <img class="thumb" src="http://secondlife.com/app/image/${thumb}/1" />
+    {{/if}}
+    <dl class="details">
+        <dt>Type</dt><dd>${type}</dd>
+        <dt>Perms</dt><dd>${perms}</dd>
+        <dt>Key</dt><dd>${key}</dd>
+        <dt>Creator</dt><dd>${creatorkey}</dd>
+    </dl>
+    <div style="clear: both;"></div>
+    <button type="button" class="bigassbutton">Get This</button>
+    <div id="item_send_status"></div>
+</div>
+</script>
 
 <script type="text/javascript" src="schmarchive.js"></script>   
 <link rel="stylesheet" type="text/css" href="reset.css" />
@@ -33,9 +58,18 @@
     <h2>Schmarchive</h2>
 </div>
 <div id="maincontent">
-    <h2 id="welcome">Hello,</h2>
-    Below you should see the contents of the prim you clicked, as well as a list of its sub-schmarchives.  Click any of the items in order to have it delivered to you.  Click any of the children in order to see their contents.
-    <div id="inv_container"></div>
+    <div id="inv_wrap" class="block_wrapper">
+        <h3>Items</h3>
+        <div id="inv_container" class="inset_block"></div>
+    </div>
+    <div id="info_wrap" class="block_wrapper">
+        <h3>Details</h3>
+        <div id="info_container" class="inset_block">Click an item on the left to see its details here.</div>
+    </div>
+    <div id="av_wrap" class="block_wrapper">
+        <h3>You</h3>
+        <div id="av_container" class="inset_block"></div>
+    </div>
 </div>
 </body>
 </html>

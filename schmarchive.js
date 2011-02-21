@@ -1,3 +1,8 @@
+//define a few constants
+var PERM_COPY = 0x00008000;
+var PERM_MODIFY = 0x00004000;
+var PERM_TRANSFER = 0x00002000;
+
 //make a namespace
 if (typeof Schmo === 'undefined') {
     var Schmo = {};
@@ -17,18 +22,14 @@ Schmo.qParam = function(name) {
 
 Schmo.init = function() {
     Schmo._baseURL = Schmo.qParam('url');
-    var userkey = Schmo.qParam('userkey');
-    if (userkey != "") {
-        Schmo.userkey = userkey;
-    }
+    Schmo.userkey = Schmo.qParam('userkey');
+    Schmo.tok = Schmo.qParam('tok');
 }
 
 Schmo.getURL = function(path) {
     var url = Schmo._baseURL + path + '?callback=?';
-    //add userkey if we have it.
-    if (typeof Schmo.userkey != "undefined") {
-        url += "&userkey=" + Schmo.userkey;
-    }
+    url += "&userkey=" + Schmo.userkey;
+    url += "&tok=" + Schmo.tok;
     return url; 
 }
 
@@ -38,17 +39,43 @@ Schmo.getURL = function(path) {
 Schmo.inventory = {
     appendTemplateItems: function(container, items, template) {
         for (i in items) {
-            $(template).tmpl(items[i]).appendTo(container);
+            var item = items[i];
+            //make a user friendly string out of the permissions mask.
+            item.perms_list = [];
+            if (item.perms_mask & PERM_MODIFY) {
+                item.perms_list.push('Modify');
+            }
+            if (item.perms_mask & PERM_COPY) {
+                item.perms_list.push('Copy');
+            }
+            if (item.perms_mask & PERM_MODIFY) {
+                item.perms_list.push('Transfer');
+            }
+            item.perms = item.perms_list.join(', ');
+            $(template).tmpl(item).appendTo(container);
+            //find that item and stick its data in there.
+            $('#' + item.key).data('info', item);
         }
     },
 
     fillContents: function(container, items) {
         Schmo.inventory.appendTemplateItems(container, items, '#item_template');
+        //now add each item's whole info object as data
+        //for (i in items) {
+
+        //}
     },
 
-    fillChildren: function(container, children) {
-        Schmo.inventory.appendTemplateItems(container, children, '#child_template');
-    },
+    //fillChildren: function(container, children) {
+        //Schmo.inventory.appendTemplateItems(container, children, '#child_template');
+    //},
+}
+
+var highlightItem = function(item) {
+    //remove highlight class from all inv_item parents
+    $('.item_li').removeClass('highlight');
+    //add highlight class to the parent of the one just clicked
+    $(item).parent().addClass('highlight');
 }
 
 $(document).ready(function() {
@@ -58,9 +85,9 @@ $(document).ready(function() {
     var info_url = Schmo.getURL('/info/');
     console.log('requesting info');
     $.getJSON(info_url, function(obj_data) {
-        //personalize the welcome message
-        var msg = $('#welcome_template').tmpl(obj_data).text();
-        $('#welcome').text(msg);
+        //personalize
+        var rendered = $('#av_template').tmpl(obj_data);
+        $('#av_container').html(rendered);
         //create a new box for this inv box
         $('#box_template').tmpl(obj_data).appendTo('#inv_container');
         var new_box = $('#' + obj_data.objkey);
@@ -73,15 +100,21 @@ $(document).ready(function() {
             Schmo.inventory.fillContents(new_box, data);
             //bind a function to each item in the box that will make it get delivered on touch
             var items_q = '#' + obj_data.objkey + ' .inv_item';
-            console.log(items_q);
-            console.log($(new_box).data('box_url'));
-            $(items_q).click(function() {
-                console.log('clicked an item');
-                var give_url = $(new_box).data('box_url') + '&item=' + encodeURIComponent($(this).text());
-                console.log(give_url);
-                $.getJSON(give_url, function(data){
-                    console.log(data);
-                });
+            $(items_q).parent().click(function() {
+                var item = $(this).find('.inv_item')
+                var give_url = $(new_box).data('box_url') + '&item=' + encodeURIComponent($(item).text());
+                var info = $(item).data('info');
+                var info_guts = $('#info_item_template').tmpl(info).html();
+                $('#info_container').html(info_guts);
+                highlightItem(item);
+                $('#info_container .bigassbutton').click(function() {
+                    $('#item_send_status').removeClass('success');
+                    $('#item_send_status').addClass('loading');
+                    $.getJSON(give_url, function(data){
+                        $('#item_send_status').removeClass('loading');
+                        $('#item_send_status').addClass('success');
+                    });
+                }); 
             });
         });
     });
