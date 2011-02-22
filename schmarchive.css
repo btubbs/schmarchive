@@ -210,3 +210,21 @@ h4.inv_item {
 .block_wrapper h3 {
     display: inline;
 }
+
+#inv_wrap {
+    overflow: hidden;
+}
+
+#inv_container {
+    position: relative;
+    min-height: 300px;
+}
+
+.inv_block {
+    position: absolute;
+    width: 300px;
+}
+
+.inv_block.new {
+    left: 310px;
+}

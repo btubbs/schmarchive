@@ -9,9 +9,11 @@
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 
 <script id="box_template" type="text/html">
+<div class="inv_block ${classes}">
     <h4>${objname}</h4>
     <ul class="inv_box" id="${objkey}">
     </ul>
+</div>
 </script>
 
 <script id="item_template" type="text/html">
@@ -21,7 +23,7 @@
 </script>
 
 <script id="child_template" type="text/html">
-    <li><span class="inv_child">${name}: ${url}</span></li>
+    <li><span id="${objkey}" class="inv_child"><a data-link="${link}">${objname}</a></span></li>
 </script>
 
 <script id="av_template" type="text/html">
@@ -30,6 +32,7 @@
 <span class="username">${username}</span>
 <p>You are currently browsing as ${username}.  All items will be sent to this account.</p>
 </script>
+
 <script id="info_item_template" type="text/html">
 <div class="item_info">
     <h4 class="inv_item ${type}">${name}</h4>
