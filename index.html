@@ -2,17 +2,17 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-    <title>Inventory Thing</title>
+    <title>Schmarchive</title>
     <link href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold&amp;subset=latin" rel="stylesheet" type="text/css"> 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
 
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 
-<script id="box_template" type="text/html">
-<div class="inv_block ${classes}">
+<script id="inv_template" type="text/html">
+<div id="inv_block_${objkey}" class="inv_block ${classes}">
     <h4 class="inv_title">${objname}</h4>
-    {{if parentlink}}<button id="${parentkey}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
-    <ul class="inv_list" id="${objkey}">
+    {{if parentlink}}<button id="parent_button_${parentkey}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
+    <ul class="inv_list" id="inv_list_${objkey}">
     </ul>
 </div>
 </script>

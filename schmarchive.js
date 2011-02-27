@@ -12,49 +12,136 @@ if (!window.hasOwnProperty('console')) {
     }
 }
 
-
-//make a namespace
-if (typeof Schmo === 'undefined') {
-    var Schmo = {};
-}
-
-Schmo.qParam = function(name) {
-    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-    var regexS = "[\\?&]"+name+"=([^&#]*)";
-    var regex = new RegExp( regexS );
-    var results = regex.exec( window.location.href );
-    if( results == null ) {
-        return "";
-    } else {
-    return decodeURIComponent(results[1].replace(/\+/g, " "));
-    }
-}
-
-Schmo.grabURLParams = function() {
-    Schmo._baseURL = Schmo.qParam('url');
-    Schmo.userkey = Schmo.qParam('userkey');
-}
-
-Schmo.grabURL = function(path) {
-    var url = Schmo._baseURL + path + '?callback=?';
-    url += "&userkey=" + Schmo.userkey;
-    url += "&tok=" + Schmo.tok;
-    return url; 
-}
-
 //TODO: figure out a way to put the templates in this js file instead of in the
 //html file
-//
-var fixHeight = function() {
-    //make shown inv block as tall as inv box
-    var title = $('.inv_title');
-    console.log(title.length);
-    var list = $('.inv_list');
-    var newheight = title.height() + list.height();
-    $('#inv_wrap').height(newheight + 44);
-}
 
-Schmo.inventory = {
+//when the dom is ready, query the prim.
+$(document).ready(function() {
+    console.log('domready');
+    Schmarchive.requestInfo();
+});
+
+//$(window).bind('popstate', function(event) {
+    //console.log('popstate');
+    ////console.log(event);
+    ////requestInfo();
+//})
+
+Schmarchive = {
+
+    requestInfo: function() {
+        console.log('requestInfo');
+        Schmarchive.getURLParams();
+        
+        var info_url = Schmarchive.buildURL('/info/');
+        $.getJSON(info_url, function(obj_data) {
+            //personalize
+            Schmarchive.renderInfo(obj_data);
+        });
+    },
+    
+    getURLParams: function() {
+        Schmarchive._baseURL = Schmarchive.qParam('url');
+        Schmarchive.userkey = Schmarchive.qParam('userkey');
+    },
+    
+    qParam: function(name) {
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( window.location.href );
+        if( results == null ) {
+            return "";
+        } else {
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    },
+    
+    buildURL: function(path) {
+        var url = Schmarchive._baseURL + path + '?callback=?';
+        url += "&userkey=" + Schmarchive.userkey;
+        url += "&tok=" + Schmarchive.tok;
+        return url; 
+    },
+
+    renderInfo: function(obj_data) {
+        console.log('renderInfo');
+
+        var rendered = $('#av_template').tmpl(obj_data);
+        $('#av_container').html(rendered);
+
+        //if this box has a parent url, create a full link for it.
+        if (obj_data.parenturl) {
+            obj_data.parentlink = Schmarchive.buildLink(obj_data.parenturl);
+        }
+
+        //create a new box for this inv box
+        //the ugliness starts here.... It would be better if I didn't use classes for the swapping.  So instead of "shown" i need to figure out a way to use an ID.
+        obj_data.classes = 'shown';
+        $('#inv_template').tmpl(obj_data).appendTo('#inv_container');
+
+        Schmarchive.current_inv_block = $('#inv_block_' + obj_data.objkey);
+        
+        if (obj_data.parenturl) {
+            //stick the parent's data on its element
+            var parentdata = {
+                "key": obj_data.parentkey,
+                "link": obj_data.parentlink,
+                "name": obj_data.parentname,
+                "url": obj_data.parenturl
+            };
+            var parentbutton = $('#parent_button_' + obj_data.parentkey);
+            //console.log('binding parent info to parent button');
+            //console.log(parentdata);
+            Schmarchive.bindParentSlider(parentbutton, parentdata);
+        }
+
+        //stash some data in the new box
+        var inv_list = $('#inv_list_' + obj_data.objkey);
+        $(inv_list).data('box_url', Schmarchive.buildURL('/give/'));
+
+        //show_children
+        var children_url = Schmarchive.buildURL('/children/');
+        $.getJSON(children_url, function(data) {
+            Schmarchive.fillChildren(inv_list, data);
+        });
+
+        //show inventory
+        var inventory_url = Schmarchive.buildURL('/inv/'); 
+        $.getJSON(inventory_url, function(data) {
+            Schmarchive.fillContents(inv_list, data);
+            Schmarchive.fixHeight();
+        });
+    },
+
+    fillChildren: function(container, children) {
+        // 'container' is jquery of ul that children are being appended to
+        // 'children' is array of json objects returned from inworld.
+
+        console.log('fillChildren');
+
+        //sort the children in order of obj name
+        children.sort(function(a, b) {
+            a = a.objname.toLowerCase();
+            b = b.objname.toLowerCase();
+            if (a < b) {
+                return -1;
+            } else if (a > b) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        var template = '#child_template';
+        for (i in children) {
+            var child = children[i];
+            child.link = Schmarchive.buildLink(child.url)
+            $(template).tmpl(child).appendTo(container);
+            $('#' + child.objkey).data('info', child);            
+        }
+        Schmarchive.bindChildSliders(container);
+    },
+    
     fillContents: function(container, items) {
         var template = '#item_template';
         for (i in items) {
@@ -86,7 +173,7 @@ Schmo.inventory = {
             var info = $(item).data('info');
             var info_guts = $('#info_item_template').tmpl(info).html();
             $('#info_container').html(info_guts);
-            highlightItem(item);
+            Schmarchive.highlightItem(item);
             $('#info_container .bigassbutton').click(function() {
                 console.log('deliver button clicked');
                 $('#item_send_status').removeClass('success');
@@ -99,27 +186,34 @@ Schmo.inventory = {
         });
     },
 
-    bindChildSlider: function() {
-        console.log('bindChildSlider');
-        $('.inv_child').click(function() {
+    bindChildSliders: function(container) {
+        console.log('bindChildSliders');
+        container.find('.inv_child').click(function() {
             console.log('child clicked');
-            //create 'new' inv box
-            var info = $(this).data('info');
-            info.classes = 'child';
-            $('#box_template').tmpl(info).appendTo('#inv_container');
-            //slide over
-            $('.inv_block.shown').addClass('dying');
-            $('.inv_block.child').animate({left: '5px'});
-            
-            console.log($('.inv_block.shown'));
-            $('.inv_block.shown').animate({left: '-305px'}, function() {
-                console.log('finished child slide');
-                $('.inv_block.dying').remove();
-                $('.inv_block.child').addClass('shown').removeClass('child');
-                history.pushState({}, '', info.link);
-                //Schmo.inventory.bindChildSlider();
-                requestInfo();
-            });
+            Schmarchive.slideChildIn(this);
+        });
+    },
+
+    slideChildIn: function(element) {
+        //create child inv box in overflow
+        var info = $(element).data('info');
+        info.classes = 'child';
+        $('#inv_template').tmpl(info).appendTo('#inv_container');
+
+        var new_block = $('#inv_block_' + info.objkey);
+        var old_block = Schmarchive.current_inv_block;
+        
+        //slide over
+        new_block.animate({left: '5px'}, function() {
+            console.log('finished child slide');
+            new_block.addClass('shown').removeClass('child');
+            history.pushState({}, '', info.link);
+            //Schmarchive.bindChildSliders();
+            Schmarchive.requestInfo();
+        });
+        
+        old_block.animate({left: '-305px'}, function() {
+            old_block.remove();
         });
     },
     
@@ -132,7 +226,7 @@ Schmo.inventory = {
             //create 'new' inv box
             var info = $(this).data('info');
             info.classes = 'parent';
-            $('#box_template').tmpl(info).appendTo('#inv_container');
+            $('#inv_template').tmpl(info).appendTo('#inv_container');
             //slide over
             $('.inv_block.shown').addClass('dying');
             $('.inv_block.parent').animate({left: '5px'});
@@ -148,8 +242,8 @@ Schmo.inventory = {
                     $('.inv_block.dying').remove();
                     $('.inv_block.parent').addClass('shown').removeClass('parent');
                     history.pushState({}, '', info.link);
-                    //Schmo.inventory.bindParentSlider();
-                    requestInfo();
+                    //Schmarchive.bindParentSlider();
+                    Schmarchive.requestInfo();
                     infoRequested = true;
                 }
             });
@@ -157,112 +251,26 @@ Schmo.inventory = {
     },
 
     buildLink: function(prim_url) {
-        return '?url=' + prim_url + '&userkey=' + Schmo.qParam('userkey');
+        return '?url=' + prim_url + '&userkey=' + Schmarchive.qParam('userkey');
     },
 
-    fillChildren: function(container, children) {
-        console.log('fillChildren');
-
-        //sort the children in order of obj name
-        children.sort(function(a, b) {
-            a = a.objname.toLowerCase();
-            b = b.objname.toLowerCase();
-            if (a < b) {
-                return -1;
-            } else if (a > b) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        var template = '#child_template';
-        for (i in children) {
-            var child = children[i];
-            child.link = Schmo.inventory.buildLink(child.url)
-            $(template).tmpl(child).appendTo(container);
-            $('#' + child.objkey).data('info', child);            
-        }
-        Schmo.inventory.bindChildSlider();
+    highlightItem: function(item) {
+        //remove highlight class from all inv_item parents
+        $('.item_li').removeClass('highlight');
+        //add highlight class to the parent of the one just clicked
+        $(item).parent().addClass('highlight');
     },
-}
-
-var highlightItem = function(item) {
-    //remove highlight class from all inv_item parents
-    $('.item_li').removeClass('highlight');
-    //add highlight class to the parent of the one just clicked
-    $(item).parent().addClass('highlight');
-}
-
-var fixHeight = function(list, container) {
     
-}
 
-var renderInfo = function(obj_data) {
-    console.log('renderInfo');
-
-    var rendered = $('#av_template').tmpl(obj_data);
-    $('#av_container').html(rendered);
-
-    //if this box has a parent url, create a full link for it.
-    if (obj_data.parenturl) {
-        obj_data.parentlink = Schmo.inventory.buildLink(obj_data.parenturl);
+    fixHeight: function() {
+        //make shown inv block as tall as inv box
+        var title = $('.inv_title');
+        console.log(title.length);
+        var list = $('.inv_list');
+        var newheight = title.height() + list.height();
+        $('#inv_wrap').height(newheight + 44);
     }
-
-    //create a new box for this inv box
-    obj_data.classes = 'shown';
-    $('#box_template').tmpl(obj_data).appendTo('#inv_container');
-
-
-    if (obj_data.parenturl) {
-        //stick the parent's data on its element
-        var parentdata = {
-            "key": obj_data.parentkey,
-            "link": obj_data.parentlink,
-            "name": obj_data.parentname,
-            "url": obj_data.parenturl
-        };
-        var parentbutton = $('#' + obj_data.parentkey);
-        //console.log('binding parent info to parent button');
-        //console.log(parentdata);
-        Schmo.inventory.bindParentSlider(parentbutton, parentdata);
-    }
-
-    //stash some data in the new box
-    var new_box = $('#' + obj_data.objkey);
-    $(new_box).data('box_url', Schmo.grabURL('/give/'));
-
-    //show_children
-    var children_url = Schmo.grabURL('/children/');
-    $.getJSON(children_url, function(data) {
-        Schmo.inventory.fillChildren(new_box, data);
-    });
-
-    //show inventory
-    var inventory_url = Schmo.grabURL('/inv/'); 
-    $.getJSON(inventory_url, function(data) {
-        Schmo.inventory.fillContents(new_box, data);
-        fixHeight();
-    });
 }
 
-var requestInfo = function() {
-    console.log('requestInfo');
-    Schmo.grabURLParams();
-    
-    var info_url = Schmo.grabURL('/info/');
-    $.getJSON(info_url, function(obj_data) {
-        //personalize
-        renderInfo(obj_data);
-    });
-}
 
-$(document).ready(function() {
-    console.log('domready!');
-    requestInfo();
-});
 
-//$(window).bind('popstate', function(event) {
-    //console.log('popstate!');
-    ////console.log(event);
-    ////requestInfo();
-//})
