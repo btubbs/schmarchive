@@ -10,8 +10,9 @@
 
 <script id="box_template" type="text/html">
 <div class="inv_block ${classes}">
-    <h4>${objname}</h4>
-    <ul class="inv_box" id="${objkey}">
+    <h4 class="inv_title">${objname}</h4>
+    {{if parentlink}}<button id="${parentkey}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
+    <ul class="inv_list" id="${objkey}">
     </ul>
 </div>
 </script>
@@ -23,14 +24,15 @@
 </script>
 
 <script id="child_template" type="text/html">
-    <li><span id="${objkey}" class="inv_child"><a data-link="${link}">${objname}</a></span></li>
+    <li><span id="${objkey}" class="inv_child"><a>${objname} &raquo;</a></span></li>
 </script>
 
 <script id="av_template" type="text/html">
-<h4 class="displayname">${displayname}</h4>
-<img class="thumb" src="http://my-secondlife.s3.amazonaws.com/users/${username}/sl_image.png" />
+    <h4 class="displayname">${displayname}</h4>
+    {{if username}}
+    <img class="thumb" src="http://my-secondlife.s3.amazonaws.com/users/${username}/sl_image.png" />{{/if}}
 <span class="username">${username}</span>
-<p>You are currently browsing as ${username}.  All items will be sent to this account.</p>
+<p>You are currently browsing as {{if username}}${username}{{else}}${userkey}{{/if}}.  All items will be sent to this account.</p>
 </script>
 
 <script id="info_item_template" type="text/html">
@@ -73,6 +75,7 @@
         <h3>You</h3>
         <div id="av_container" class="inset_block"></div>
     </div>
+    <div style="clear: both;"></div>
 </div>
 </body>
 </html>

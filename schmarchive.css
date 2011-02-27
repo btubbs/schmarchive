@@ -42,16 +42,20 @@
     background-image: url('gesture.png');
 }
 
-.inv_box li {
+.inv_list {
+    margin-top: 10px;
+}
+
+.inv_list li {
     padding: 2px 0;
     list-style: none;
 }
 
-.inv_box li:nth-child(even) {
+.inv_list li:nth-child(even) {
     background: #222;
 }
 
-.inv_box li.highlight {
+.inv_list li.highlight {
     background: #324D00;
 }
 
@@ -91,6 +95,7 @@ a{
 
 #maincontent {
     padding: 10px;
+    margin-bottom: 20px;
 }
 
 .inset_block {
@@ -204,7 +209,7 @@ h4.inv_item {
 
 .block_wrapper {
     float: left;
-    margin: 10px;
+    margin: 10px 10px 30px 10px;
 }
 
 .block_wrapper h3 {
@@ -218,6 +223,7 @@ h4.inv_item {
 #inv_container {
     position: relative;
     min-height: 300px;
+    height: 100%;
 }
 
 .inv_block {
@@ -225,6 +231,21 @@ h4.inv_item {
     width: 300px;
 }
 
-.inv_block.new {
+.inv_block.child {
     left: 310px;
+}
+
+.inv_block.parent {
+    left: -310px;
+}
+
+.inv_block h4 {
+    display: inline;
+    font-size: 20px;
+}
+
+.inv_parent {
+    float: right;
+    display: inline;
+    font-size: 10px;
 }
