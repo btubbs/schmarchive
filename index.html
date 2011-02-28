@@ -9,11 +9,11 @@
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 
 <script id="inv_template" type="text/html">
-<div id="inv_block_${objkey}" class="inv_block ${classes}">
+    <div id="inv_block_${objkey}" class="inv_block ${classes}">
     <h4 class="inv_title">${objname}</h4>
-    {{if parentlink}}<button id="parent_button_${parentkey}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
-    <ul class="inv_list" id="inv_list_${objkey}">
-    </ul>
+    {{if parentlink}}<button id="parent_btn_${parentkey}" data-key="${parentkey}" data-link="${parentlink}" data-url="${parenturl}" data-name="${parentname}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
+    <ul class="child_list" id="child_list_${objkey}"></ul>
+    <ul class="inv_list" id="inv_list_${objkey}"></ul>
 </div>
 </script>
 

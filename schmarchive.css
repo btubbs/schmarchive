@@ -63,6 +63,21 @@ li.invisible {
     display: none;
 }
 
+.child_list {
+    margin-top: 7px;
+}
+
+.child_list li {
+    background-image: url('folder-16.png');
+    padding: 2px 0 2px 21px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.child_list li.active {
+    background-color: orange;
+}
+
 body {
     background-color: #2e2e2e;
     font-family: 'Droid Sans', arial, serif;

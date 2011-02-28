@@ -21,12 +21,6 @@ $(document).ready(function() {
     Schmarchive.requestInfo();
 });
 
-//$(window).bind('popstate', function(event) {
-    //console.log('popstate');
-    ////console.log(event);
-    ////requestInfo();
-//})
-
 Schmarchive = {
 
     requestInfo: function() {
@@ -70,47 +64,56 @@ Schmarchive = {
         var rendered = $('#av_template').tmpl(obj_data);
         $('#av_container').html(rendered);
 
+        //ADD some more data to the context object before rendering the box
+        //template
+        
         //if this box has a parent url, create a full link for it.
         if (obj_data.parenturl) {
             obj_data.parentlink = Schmarchive.buildLink(obj_data.parenturl);
         }
 
-        //create a new box for this inv box
-        //the ugliness starts here.... It would be better if I didn't use classes for the swapping.  So instead of "shown" i need to figure out a way to use an ID.
+        // If the inv_box has already been rendered (as when we're coming from a parent or child link), then just replace its content.
+        // If it has *not* yet been rendered (as when first loading the page), then just append to container.
         obj_data.classes = 'shown';
-        $('#inv_template').tmpl(obj_data).appendTo('#inv_container');
 
-        Schmarchive.current_inv_block = $('#inv_block_' + obj_data.objkey);
-        
-        if (obj_data.parenturl) {
-            //stick the parent's data on its element
-            var parentdata = {
-                "key": obj_data.parentkey,
-                "link": obj_data.parentlink,
-                "name": obj_data.parentname,
-                "url": obj_data.parenturl
-            };
-            var parentbutton = $('#parent_button_' + obj_data.parentkey);
-            //console.log('binding parent info to parent button');
-            //console.log(parentdata);
-            Schmarchive.bindParentSlider(parentbutton, parentdata);
+        var inv_block = $('#inv_block_' + obj_data.objkey);
+        var new_block = $('#inv_template').tmpl(obj_data);
+        if (inv_block.length) {
+            //replace inv_block with new_block
+            inv_block.replaceWith(new_block);
+        } else {
+            console.log("There's no inv block!");
+            new_block.appendTo('#inv_container');
         }
+
+
+        //store a reference to the current inv block on the Schmarchive object
+        Schmarchive.current_inv_block = $('#inv_block_' + obj_data.objkey);
+        Schmarchive.current_inv_block.data('info', obj_data);
 
         //stash some data in the new box
         var inv_list = $('#inv_list_' + obj_data.objkey);
-        $(inv_list).data('box_url', Schmarchive.buildURL('/give/'));
+        $(inv_list).data('give_url', Schmarchive.buildURL('/give/'));
+       
+        //if there's a parent button, bind its clicker 
+        if (obj_data.parenturl) {
+            var parentbutton = $('#parent_btn_' + obj_data.parentkey);
+            Schmarchive.bindParentSlider(parentbutton);
+        }
 
         //show_children
+        var child_list = $('#child_list_' + obj_data.objkey);
         var children_url = Schmarchive.buildURL('/children/');
         $.getJSON(children_url, function(data) {
-            Schmarchive.fillChildren(inv_list, data);
+            Schmarchive.fillChildren(child_list, data);
+            Schmarchive.fixHeight(Schmarchive.current_inv_block);
         });
 
         //show inventory
         var inventory_url = Schmarchive.buildURL('/inv/'); 
         $.getJSON(inventory_url, function(data) {
             Schmarchive.fillContents(inv_list, data);
-            Schmarchive.fixHeight();
+            Schmarchive.fixHeight(Schmarchive.current_inv_block);
         });
     },
 
@@ -143,6 +146,7 @@ Schmarchive = {
     },
     
     fillContents: function(container, items) {
+        console.log('fillContents');
         var template = '#item_template';
         for (i in items) {
             var item = items[i];
@@ -169,7 +173,7 @@ Schmarchive = {
         $(items_q).parent().click(function() {
             console.log('inv item clicked');
             var item = $(this).find('.inv_item')
-            var give_url = $(container).data('box_url') + '&item=' + encodeURIComponent($(item).text());
+            var give_url = $(container).data('give_url') + '&item=' + encodeURIComponent($(item).text());
             var info = $(item).data('info');
             var info_guts = $('#info_item_template').tmpl(info).html();
             $('#info_container').html(info_guts);
@@ -188,65 +192,85 @@ Schmarchive = {
 
     bindChildSliders: function(container) {
         console.log('bindChildSliders');
-        container.find('.inv_child').click(function() {
-            console.log('child clicked');
-            Schmarchive.slideChildIn(this);
+        var children = container.find('.inv_child');
+        children.click(function() {
+            var child = $(this);
+            child.parent().addClass('active');
+            console.log('child clicked: ' + child.text());
+            Schmarchive.slideChildIn(child);
         });
     },
 
     slideChildIn: function(element) {
         //create child inv box in overflow
-        var info = $(element).data('info');
+        var info = element.data('info');
         info.classes = 'child';
         $('#inv_template').tmpl(info).appendTo('#inv_container');
 
         var new_block = $('#inv_block_' + info.objkey);
         var old_block = Schmarchive.current_inv_block;
-        
+       
+        //request the new info now so it can be in transit while the animation
+        //is playing
+        history.pushState({}, '', info.link);
+        Schmarchive.requestInfo();
+
         //slide over
         new_block.animate({left: '5px'}, function() {
             console.log('finished child slide');
             new_block.addClass('shown').removeClass('child');
-            history.pushState({}, '', info.link);
-            //Schmarchive.bindChildSliders();
-            Schmarchive.requestInfo();
         });
         
         old_block.animate({left: '-305px'}, function() {
             old_block.remove();
         });
     },
-    
-    bindParentSlider: function(element, data) {
-        console.log('bindParentSlider name: ' + data.name);
-        console.log('bindParentSlider elementtext: ' + element.text());
-        element.data('info', data);
+
+    bindParentSlider: function(element) {
+        console.log('bindParentSlider name: ' + element.data('name'));
         element.click(function() {
-            console.log('inv parent clicked');
-            //create 'new' inv box
-            var info = $(this).data('info');
-            info.classes = 'parent';
-            $('#inv_template').tmpl(info).appendTo('#inv_container');
-            //slide over
-            $('.inv_block.shown').addClass('dying');
-            $('.inv_block.parent').animate({left: '5px'});
+            Schmarchive.slideParentIn($(this));
+        });
+    },
 
-            //this flag is an ugly hack to prevent a double call on clicking
-            //the parent.  It's ugly because I don't know why the double call
-            //was happening in the first place :(
-            var infoRequested = false;
+    slideParentIn: function(element) {
+        //element will be the jquery-wrapped parent button that just got clicked.
+        console.log('slideParentIn: ' + element.data('name'));
+        
+        //create new inv box, positioned by 'parent' class, and rendered with
+        //data pulled of the parent btn that was passed into this function
+        var info = {
+            'objname': element.data('name'),
+            'objkey': element.data('key'),
+            'objlink': element.data('link'),
+            'objurl': element.data('url')
+        } 
 
-            $('.inv_block.shown').animate({left: '305px'}, function() {
-                console.log('finished parent slide');
-                if (!infoRequested) {
-                    $('.inv_block.dying').remove();
-                    $('.inv_block.parent').addClass('shown').removeClass('parent');
-                    history.pushState({}, '', info.link);
-                    //Schmarchive.bindParentSlider();
-                    Schmarchive.requestInfo();
-                    infoRequested = true;
-                }
-            });
+        console.log(info);
+
+        //add 'parent' class to position new box to the left
+        info.classes = 'parent';
+
+        //render new box
+        $('#inv_template').tmpl(info).appendTo('#inv_container');
+        console.log('added new block');
+        var new_block = $('#inv_block_' + info.objkey);
+        var old_block = Schmarchive.current_inv_block;
+
+        //request the new info now so it can be in transit while the animation
+        //is playing
+        history.pushState({}, '', info.objlink);
+        Schmarchive.requestInfo();
+        
+        //slide over
+        new_block.animate({left: '5px'}, function() {
+            console.log('finished parent slide');
+            new_block.addClass('shown').removeClass('parent');
+        });
+
+        old_block.animate({left: '305px'}, function() {
+            //Schmarchive.current_inv_block = new_block;
+            old_block.remove();
         });
     },
 
@@ -262,13 +286,15 @@ Schmarchive = {
     },
     
 
-    fixHeight: function() {
+    fixHeight: function(element) {
         //make shown inv block as tall as inv box
-        var title = $('.inv_title');
-        console.log(title.length);
-        var list = $('.inv_list');
-        var newheight = title.height() + list.height();
-        $('#inv_wrap').height(newheight + 44);
+        //'element' will be jquery obj of the inv_block whose height we're matching.
+        var extra = 44;
+        var title = element.find('.inv_title');
+        var child_list = element.find('.child_list');
+        var inv_list = element.find('.inv_list');
+        var newheight = title.height() + child_list.height() + inv_list.height() + extra;
+        $('#inv_wrap').height(newheight);
     }
 }
 
