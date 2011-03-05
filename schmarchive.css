@@ -108,7 +108,11 @@ a{
     font-size: 40px;
 }
 
-#maincontent {
+#livecontent {
+    min-height: 450px;
+}
+
+#livecontent, #textcontent {
     padding: 10px;
     margin-bottom: 20px;
 }
