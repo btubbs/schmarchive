@@ -289,11 +289,11 @@ Schmarchive = {
     fixHeight: function(element) {
         //make shown inv block as tall as inv box
         //'element' will be jquery obj of the inv_block whose height we're matching.
-        var extra = 44;
+        var extra = 50;
         var title = element.find('.inv_title');
         var child_list = element.find('.child_list');
         var inv_list = element.find('.inv_list');
-        var newheight = title.height() + child_list.height() + inv_list.height() + extra;
+        var newheight = title.outerHeight() + child_list.outerHeight() + inv_list.outerHeight() + extra;
         $('#inv_wrap').height(newheight);
     }
 }

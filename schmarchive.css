@@ -225,6 +225,7 @@ h4.inv_item {
 .block_wrapper {
     float: left;
     margin: 10px 10px 30px 10px;
+    width: 310px;
 }
 
 .block_wrapper h3 {
@@ -263,4 +264,13 @@ h4.inv_item {
     float: right;
     display: inline;
     font-size: 10px;
+}
+
+p {
+    margin-top: 20px;
+    line-height: 19px;
+}
+
+p:first-child {
+    margin-top: 0px;
 }
