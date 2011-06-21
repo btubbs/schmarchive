@@ -1,104 +1,26 @@
 <html>
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <title>Schmarchive</title>
-    <link href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold&amp;subset=latin" rel="stylesheet" type="text/css"> 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
-
-    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-
-<script id="inv_template" type="text/html">
-    <div id="inv_block_${objkey}" class="inv_block ${classes}">
-    <h4 class="inv_title">${objname}</h4>
-    {{if parentlink}}<button id="parent_btn_${parentkey}" data-key="${parentkey}" data-link="${parentlink}" data-url="${parenturl}" data-name="${parentname}" class="inv_parent">&laquo; ${parentname}</button>{{/if}}
-    <ul class="child_list" id="child_list_${objkey}"></ul>
-    <ul class="inv_list" id="inv_list_${objkey}"></ul>
-</div>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Schmarchive2</title>
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold&amp;subset=latin" rel="stylesheet" type="text/css"> 
+  <script type="text/javascript" src="./jquery-1.6.1.js"></script>
+  <script type="text/javascript" src="./jquery.tmpl.js"></script>
+  <script type="text/javascript" src="./schmarchive.js"></script>   
+  <link rel="stylesheet" type="text/css" href="reset.css" />
+  <link rel="stylesheet" type="text/css" href="schmarchive.css" />
+<script type="text/javascript" charset="utf-8">
+//when the dom is ready, query the prim.
+$(document).ready(function() {
+    console.log('domready');
+    Schmarchive2.init('#frame');
+});
 </script>
-
-<script id="item_template" type="text/html">
-    <li class="item_li{{if name.charAt(0) === '.'}} hidden invisible{{/if}}">
-        <span id="${key}" class="inv_item ${type}">${name}</span>
-    </li>
-</script>
-
-<script id="child_template" type="text/html">
-    <li><span id="${objkey}" class="inv_child"><a>${objname} &raquo;</a></span></li>
-</script>
-
-<script id="av_template" type="text/html">
-    <h4 class="displayname">${displayname}</h4>
-    {{if username}}
-    <img class="thumb" src="http://my-secondlife.s3.amazonaws.com/users/${username}/sl_image.png" />{{/if}}
-<span class="username">${username}</span>
-<p>You are currently browsing as {{if username}}${username}{{else}}${userkey}{{/if}}.  All items will be sent to this account.</p>
-</script>
-
-<script id="info_item_template" type="text/html">
-<div class="item_info">
-    <h4 class="inv_item ${type}">${name}</h4>
-    <div style="clear: both;"></div>
-    {{if thumb}}
-    <img class="thumb" src="http://secondlife.com/app/image/${thumb}/1" />
-    {{/if}}
-    <dl class="details">
-        <dt>Type</dt><dd>${type}</dd>
-        <dt>Perms</dt><dd>${perms}</dd>
-        <dt>Key</dt><dd>${key}</dd>
-        <dt>Creator</dt><dd>${creatorkey}</dd>
-    </dl>
-    <div style="clear: both;"></div>
-    <button type="button" class="bigassbutton">Get This</button>
-    <div id="item_send_status"></div>
-</div>
-</script>
-
-<script type="text/javascript" src="schmarchive.js"></script>   
-<link rel="stylesheet" type="text/css" href="reset.css" />
-<link rel="stylesheet" type="text/css" href="schmarchive.css" />
 </head>
 <body>
 <div id="header">
-    <h2>Schmarchive</h2>
+    <h2>Schmarchive2</h2>
 </div>
-<div id="livecontent">
-    <div id="inv_wrap" class="block_wrapper">
-        <h3>Items</h3>
-        <div id="inv_container" class="inset_block"></div>
-    </div>
-    <div id="info_wrap" class="block_wrapper">
-        <h3>Details</h3>
-        <div id="info_container" class="inset_block">Click an item on the left to see its details here.</div>
-    </div>
-    <div id="av_wrap" class="block_wrapper">
-        <h3>You</h3>
-        <div id="av_container" class="inset_block"></div>
-    </div>
-<div style="clear: both;"></div>
-</div>
-<div id="textcontent">
-<div class="block_wrapper">
-    <h3>What Is This?</h3>
-    <div class="inset_block">
-        <p>Schmarchive is a web interface for browsing the contents of Second Life objects. </p>
-        <p>Click on an item from the list above to see details about it, then click "Get This" to have it delivered to you inworld.</p>
-    </div>
-</div>
-<div class="block_wrapper">
-    <h3>Having Problems?</h3>
-    <div class="inset_block">
-        <p>Schmarchive uses <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">new javascript functions</a> that are only supported in the latest browsers.  It's known to work in the <a href="http://www.mozilla.com/en-US/firefox/beta/">Firefox 4 Beta</a> and in <a href="http://www.google.com/chrome">Google Chrome</a>.  (I prefer Chrome.)</p>
-        <p>If you're not using one of those browsers, now's a good time to start.</p>
-    </div>
-</div>
-<div class="block_wrapper">
-    <h3>There is no <strike>spoon</strike> server</h3>
-    <div class="inset_block">
-        <p>No database or server side logic is used in Schmarchive.  Everything you see on this page is accomplished with regular HTML, CSS, Javascript and LSL.  </p>
-        <p>Your browser talks directly to the LSL scripts inworld using a technique called <a href="http://www.ibm.com/developerworks/library/wa-aj-jsonp1/">JSONP</a>.  You can put the Schmarchive LSL scripts into any prim and they'll work.  You can copy the HTML, CSS, and Javascript onto any web host, and it will work.</p>
-    </div>
-</div>
+<div id="frame">
 </div>
 </body>
 </html>

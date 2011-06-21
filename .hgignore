@@ -1,4 +1,4 @@
 syntax: glob
 .*.swp
 .*.swo
-NOTES
+NOTES.txt

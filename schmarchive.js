@@ -9,17 +9,57 @@ if (!window.hasOwnProperty('console')) {
     window.console = {};
     window.console.log = function(msg) {
         //do nothing
-    }
+    };
 }
 
 //TODO: figure out a way to put the templates in this js file instead of in the
 //html file
 
-//when the dom is ready, query the prim.
-$(document).ready(function() {
-    console.log('domready');
-    Schmarchive.requestInfo();
-});
+
+var qParam = function(name) {
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( window.location.href );
+        if( results === null ) {
+            return "";
+        } else {
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    },
+
+Schmarchive2 = {
+    infoPath: '/info/',
+    invPath: '/inv/',
+    init: function(frame_selector) {
+              // store params, request initial data
+              this.frame = $(frame_selector);
+              this.url = qParam('url');
+              this.av = qParam('av');
+              this.tok = qParam('tok');
+              console.log(this);
+
+              // get some info about the prim
+              this.request(this.infoPath);
+
+              // get the inventory list
+              this.request(this.invPath);
+          },
+    
+    _buildURL: function(path) {
+        var url = this.url + path + '?callback=?';
+        url += "&av=" + this.av;
+        url += "&tok=" + this.tok;
+        return url; 
+    },
+    
+    request: function(path) {
+        var url = this._buildURL(path);
+        $.getJSON(url, function(obj_data) {
+            console.log(obj_data);
+        });
+    }
+};
 
 Schmarchive = {
 
