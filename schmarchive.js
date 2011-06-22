@@ -27,10 +27,11 @@ var qParam = function(name) {
             return decodeURIComponent(results[1].replace(/\+/g, " "));
         }
     },
-
+    
 Schmarchive2 = {
     infoPath: '/info/',
     invPath: '/inv/',
+    itemTmpl: '<div class="inv_item ${type}"><div class="inv_item_name ${type}">${name}</div>{{if thumb}}<img class="thumb" src="http://secondlife.com/app/image/${thumb}/1" />{{/if}}</div>',
     init: function(frame_selector) {
               // store params, request initial data
               this.frame = $(frame_selector);
@@ -40,24 +41,40 @@ Schmarchive2 = {
               console.log(this);
 
               // get some info about the prim
-              this.request(this.infoPath);
+              //this.request(this.infoPath);
 
               // get the inventory list
-              this.request(this.invPath);
+              this.request(this.invPath, this.listInventory);
           },
     
     _buildURL: function(path) {
-        var url = this.url + path + '?callback=?';
+      var url = this.url + path + '?callback=?';
         url += "&av=" + this.av;
         url += "&tok=" + this.tok;
         return url; 
     },
     
-    request: function(path) {
+    request: function(path, callback, context) {
         var url = this._buildURL(path);
-        $.getJSON(url, function(obj_data) {
-            console.log(obj_data);
+        $.ajax({
+          url: url,
+          dataType: 'jsonp',
+          success: callback,
+          context: this
         });
+    },
+
+    listInventory:  function(items) {
+      for ( var i=0, len=items.length; i<len; ++i ){
+        var item = items[i];
+        console.log(item);
+        $.tmpl(this.itemTmpl, item).appendTo(this.frame);
+      }
+      $(this.frame).isotope({
+        // options
+        itemSelector : '.inv_item',
+        layoutMode : 'fitRows'
+      });
     }
 };
 

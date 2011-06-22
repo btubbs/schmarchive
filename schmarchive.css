@@ -1,44 +1,54 @@
 .inv_item {
+  border: 10px solid #151515;
+  /*min-width: 100px;*/
+  /*min-height: 100px;*/
+  background: #2e2e2e;
+  padding: 5px;
+}
+
+.inv_item_name {
     padding-left: 21px;
     background-repeat: no-repeat;
-    cursor: pointer;
+    /*cursor: pointer;*/
+    margin-bottom: 5px;
+    font-size: 10px;
 }
 
 .item_li {
     cursor: pointer;
 }
 
-.texture {
+.inv_item_name.texture {
     background-image: url('texture.png');
 }
-.sound {
+.inv_item_name.sound {
     background-image: url('sound.png');
 }
-.landmark {
+.inv_item_name.landmark {
     background-image: url('landmark.png');
 }
-.clothing {
+.inv_item_name.clothing {
     background-image: url('clothing.png');
 }
-.object {
+.inv_item_name.object {
     background-image: url('object.png');
 }
-.notecard {
+.inv_item_name.notecard {
     background-image: url('notecard.png');
 }
-.script {
+.inv_item_name.script {
     background-image: url('script.png');
 }
-.bodypart {
+.inv_item_name.bodypart {
     background-image: url('bodypart.png');
 }
-.animation {
+.inv_item_name.animation {
     background-image: url('animation.png');
 }
-.clothing {
+.inv_item_name.clothing {
     background-image: url('clothing.png');
 }
-.gesture {
+.inv_item_name.gesture {
     background-image: url('gesture.png');
 }
 
@@ -79,7 +89,7 @@ li.invisible {
 }
 
 body {
-    background-color: #2e2e2e;
+    background-color: #151515;
     font-family: 'Droid Sans', arial, serif;
     font-size: 15px;
     color: white;
@@ -205,9 +215,12 @@ h4.inv_item {
 }
 
 .thumb {
-    float: right;
-    height: 75px;
-    margin-left: 5px;
+    /*float: right;*/
+    /*height: 75px;*/
+    /*margin-left: 5px;*/
+  display: block;
+  width: 75px;
+  height: 75px;
 }
 
 #item_send_status {
