@@ -1,7 +1,6 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Schmarchive2</title>
   <link href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold&amp;subset=latin" rel="stylesheet" type="text/css"> 
   <script type="text/javascript" src="jquery-1.6.1.js"></script>
   <script type="text/javascript" src="jquery.tmpl.js"></script>
@@ -9,17 +8,60 @@
   <script type="text/javascript" src="schmarchive.js"></script>   
   <link rel="stylesheet" type="text/css" href="reset.css" />
   <link rel="stylesheet" type="text/css" href="schmarchive.css" />
-<script type="text/javascript" charset="utf-8">
+  <!--BEGIN TEMPLATES-->
+  <script id="item_tmpl" type="text/html" charset="utf-8">
+    <div class="inv_item ${type}{{if hidden}} hidden{{/if}}">
+      <div class="inv_item_name ${type}">${name}</div>
+      <button class="get">Get</button>
+      <div class="perms">
+      Permissions <br /> 
+        Current:
+        <span class="{{if mod}}enabled{{else}}disabled{{/if}}">m</span> /
+        <span class="{{if copy}}enabled{{else}}disabled{{/if}}">c</span> /
+        <span class="{{if trans}}enabled{{else}}disabled{{/if}}">t</span>
+      <br />
+        Next:
+        <span class="{{if next_mod}}enabled{{else}}disabled{{/if}}">m</span> /
+        <span class="{{if next_copy}}enabled{{else}}disabled{{/if}}">c</span> /
+        <span class="{{if next_trans}}enabled{{else}}disabled{{/if}}">t</span>
+      </div>
+    
+      {{if thumb}}<img class="thumb" src="http://secondlife.com/app/image/${thumb}/1" />{{/if}}
+    </div>
+  </script>
+  <script type="text/html" charset="utf-8">
+    <h2>${name}</h2>
+  </script>
+  <!--END TEMPLATES-->
+  
+  <script type="text/javascript" charset="utf-8">
 //when the dom is ready, query the prim.
 $(document).ready(function() {
-    console.log('domready');
     Schmarchive2.init('#frame');
 });
 </script>
 </head>
 <body>
 <div id="header">
-    <h2>Schmarchive2</h2>
+  <div id="title"></div>
+  <section id="options" class="clearfix"> 
+      <h3>Filters</h3> 
+ 
+      <ul id="filters" class="option-set clearfix" data-option-key="filter"> 
+        <li><a href="#filter" data-filter=":not(.hidden)" class="selected">default</a></li>
+        <li><a href="#filter" data-filter=".texture">texture</a></li> 
+        <li><a href="#filter" data-filter=".sound">sound</a></li> 
+        <li><a href="#filter" data-filter=".landmark">landmark</a></li> 
+        <li><a href="#filter" data-filter=".clothing">clothing</a></li> 
+        <li><a href="#filter" data-filter=".object">object</a></li> 
+        <li><a href="#filter" data-filter=".notecard">notecard</a></li> 
+        <li><a href="#filter" data-filter=".script">script</a></li> 
+        <li><a href="#filter" data-filter=".bodypart">bodypart</a></li> 
+        <li><a href="#filter" data-filter=".animation">animation</a></li> 
+        <li><a href="#filter" data-filter=".gesture">gesture</a></li> 
+        <li><a href="#filter" data-filter=".hidden">hidden</a></li> 
+      </ul> 
+  </section> <!-- #options --> 
 </div>
 <div id="frame">
 </div>
