@@ -30,6 +30,8 @@ Schmarchive2 = {
     invPath: '/inv/',
     givePath: '/give/',
     itemTmpl: '#item_tmpl',
+    titleTmpl: '#title_tmpl',
+    titleContainer: '#title',
     getButton: '.get',
     filters: '#filters a',
     init: function(frame_selector) {
@@ -54,6 +56,7 @@ Schmarchive2 = {
 
               // request the prim info
               this.request(this.buildURL(this.infoPath), this.onInfo, this);
+
           },
     
     buildURL: function(path) {
@@ -102,6 +105,12 @@ Schmarchive2 = {
         pane.data('info', item);
       }
 
+      // hide broken images (any SL image with alpha in it will have no
+      // search.secondlife.com thumbnail)
+      $('img.thumb').error(function(ev) {
+              //console.log(ev);
+              $(this).hide();
+          });
       // call the isotope plugin on the frame
       $(this.frame).isotope({
         // options
@@ -142,5 +151,13 @@ Schmarchive2 = {
         // change highlighting on the filter bar
         $(self.filters + '.selected').removeClass('selected');
         $(this).addClass('selected');
+    },
+
+    onInfo: function(info) {
+      // update the header
+      $(this.titleTmpl).tmpl(info).appendTo(this.titleContainer);
+      // update the actual page title
+      $.tmpl('<title>${objname}</title>', info).appendTo('head');
+      console.log(info);
     }
 };

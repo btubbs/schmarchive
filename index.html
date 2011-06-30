@@ -29,8 +29,8 @@
       {{if thumb}}<img class="thumb" src="http://secondlife.com/app/image/${thumb}/1" />{{/if}}
     </div>
   </script>
-  <script type="text/html" charset="utf-8">
-    <h2>${name}</h2>
+  <script id="title_tmpl" type="text/html" charset="utf-8">
+    <h2>${objname}</h2>
   </script>
   <!--END TEMPLATES-->
   
@@ -45,7 +45,6 @@ $(document).ready(function() {
 <div id="header">
   <div id="title"></div>
   <section id="options" class="clearfix"> 
-      <h3>Filters</h3> 
  
       <ul id="filters" class="option-set clearfix" data-option-key="filter"> 
         <li><a href="#filter" data-filter=":not(.hidden)" class="selected">default</a></li>
