@@ -47,7 +47,7 @@ $(document).ready(function() {
   <section id="options" class="clearfix"> 
  
       <ul id="filters" class="option-set clearfix" data-option-key="filter"> 
-        <li><a href="#filter" data-filter=":not(.hidden)" class="selected">default</a></li>
+        <li><a href="#filter" data-filter=":not(.hidden, .about)" class="selected">default</a></li>
         <li><a href="#filter" data-filter=".texture">texture</a></li> 
         <li><a href="#filter" data-filter=".sound">sound</a></li> 
         <li><a href="#filter" data-filter=".landmark">landmark</a></li> 
@@ -59,10 +59,48 @@ $(document).ready(function() {
         <li><a href="#filter" data-filter=".animation">animation</a></li> 
         <li><a href="#filter" data-filter=".gesture">gesture</a></li> 
         <li><a href="#filter" data-filter=".hidden">hidden</a></li> 
+        <li><a href="#filter" data-filter=".about">about</a></li> 
       </ul> 
   </section> <!-- #options --> 
 </div>
 <div id="frame">
+  <div class="inv_item about tmphide">
+    <div class="inv_item_name bodypart about">Me</div>
+    <p>
+      Schmarchive is the creation of Schmobag Hogfather (aka Brent Tubbs in real life).
+    </p>
+  </div>
+  <div class="inv_item about tmphide">
+    <div class="inv_item_name script about">Tech</div>
+    <p>
+      It's built entirely with LSL, Javascript, HTML and CSS.  There is no database or server side code.
+    </p>
+    <p>
+      <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a> is awesome.
+    </p>
+  </div>
+  <div class="inv_item about double tmphide">
+    <div class="inv_item_name gesture about">Thanks</div>
+    <p>
+      Schmarchive uses search.secondlife.com for image thumbnails, and inventory icons from the "Silver"
+      skin of the version 1 Second Life Viewer.
+    </p>
+    <p>
+      Layout and filtering features are provided by the awesome <a href="http://isotope.metafizzy.co/">Isotope</a> plugin for 
+     jQuery. 
+   </p>
+
+  </div>
+  <div class="inv_item about double tmphide">
+    <div class="inv_item_name notecard about">License</div>
+    <p>
+      Schmarchive is <a href="http://bits.btubbs.com/schmarchive2/src">open source</a> and licensed under the GPL.
+    </p>
+    <p>
+      But if you want to set up a copy of Schmarchive on your own server, for commercial use, you'll need to buy a <a href="http://isotope.metafizzy.co/docs/license.html">license</a>
+     for Isotope. 
+    </p>
+  </div>
 </div>
 </body>
 </html>

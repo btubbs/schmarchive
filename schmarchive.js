@@ -116,9 +116,12 @@ Schmarchive2 = {
         // options
         itemSelector : '.inv_item',
         layoutMode : 'fitRows',
-        filter: '.inv_item:not(.hidden)',
+        filter: '.inv_item:not(.hidden, .about)',
         animationEngine: 'best-available'
       });
+
+      // remove the tmphide class from the 'about' boxes
+      $('.tmphide').removeClass('tmphide');
     },
 
     onGetClick: function(ev) {
