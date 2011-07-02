@@ -80,29 +80,37 @@ Schmarchive2 = {
       for ( var i=0, len=items.length; i<len; ++i ){
         var item = items[i];
 
-        // unpack item permissions
-        item.mod = item.owner_perms_mask & PERM_MODIFY;
-        item.copy = item.owner_perms_mask & PERM_COPY;
-        item.trans = item.owner_perms_mask & PERM_TRANSFER;
-        
-        item.next_mod = item.next_perms_mask & PERM_MODIFY;
-        item.next_copy = item.next_perms_mask & PERM_COPY;
-        item.next_trans = item.next_perms_mask & PERM_TRANSFER;
+        if (item.type != 'info' && item.type !== undefined) {
+            // unpack item permissions
+            item.mod = item.owner_perms_mask & PERM_MODIFY;
+            item.copy = item.owner_perms_mask & PERM_COPY;
+            item.trans = item.owner_perms_mask & PERM_TRANSFER;
+            
+            item.next_mod = item.next_perms_mask & PERM_MODIFY;
+            item.next_copy = item.next_perms_mask & PERM_COPY;
+            item.next_trans = item.next_perms_mask & PERM_TRANSFER;
 
-        // strip thumbnail if null key
-        if (item.thumb === NULL_KEY) {
-          delete item.thumb;
+            // strip thumbnail if null key
+            if (item.thumb === NULL_KEY) {
+              delete item.thumb;
+            }
+
+            // optionally hide items whose name starts with "."
+            if (item.name.charAt(0) === ".") {
+                item.hidden = true;
+            }
+            
+            // Using the item template identified by itemTmpl, append a div for
+            // this item to the main frame.
+            var pane = $(this.itemTmpl).tmpl(item).appendTo(this.frame);
+            pane.data('info', item);
+        } else {
+            if (item.more === 1) {
+                var newpage = item.page + 1;
+                var url = this.buildURL(this.invPath) + "&p=" + newpage;
+                this.request(url, this.insertMore, this);
+            }
         }
-
-        // optionally hide items whose name starts with "."
-        if (item.name.charAt(0) === ".") {
-            item.hidden = true;
-        }
-
-        // Using the item template identified by itemTmpl, append a div for
-        // this item to the main frame.
-        var pane = $(this.itemTmpl).tmpl(item).appendTo(this.frame);
-        pane.data('info', item);
       }
 
       // hide broken images (any SL image with alpha in it will have no
@@ -122,6 +130,54 @@ Schmarchive2 = {
 
       // remove the tmphide class from the 'about' boxes
       $('.tmphide').removeClass('tmphide');
+    },
+
+    insertMore: function(items) {
+        // render each non-info item as a template and add to string
+        // call isotope insert and pass in the jquery wrapped string.
+      for ( var i=0, len=items.length; i<len; ++i ){
+        var item = items[i];
+
+        if (item.type != 'info' && item.type !== undefined) {
+            // unpack item permissions
+            item.mod = item.owner_perms_mask & PERM_MODIFY;
+            item.copy = item.owner_perms_mask & PERM_COPY;
+            item.trans = item.owner_perms_mask & PERM_TRANSFER;
+            
+            item.next_mod = item.next_perms_mask & PERM_MODIFY;
+            item.next_copy = item.next_perms_mask & PERM_COPY;
+            item.next_trans = item.next_perms_mask & PERM_TRANSFER;
+
+            // strip thumbnail if null key
+            if (item.thumb === NULL_KEY) {
+              delete item.thumb;
+            }
+
+            // optionally hide items whose name starts with "."
+            if (item.name.charAt(0) === ".") {
+                item.hidden = true;
+            }
+            
+            var panestr = $.tmpl($(this.itemTmpl), item);
+            console.log(item);
+            var res = $(this.frame).isotope('insert', panestr);
+            console.log(res);
+            var pane = $('.inv_item').last();
+            pane.data('info', item);
+        } else {
+            if (item.more === 1) {
+                var newpage = item.page + 1;
+                var url = this.buildURL(this.invPath) + "&p=" + newpage;
+                this.request(url, this.insertMore, this);
+            }
+        }
+      }
+      // hide broken images (any SL image with alpha in it will have no
+      // search.secondlife.com thumbnail)
+      $('img.thumb').error(function(ev) {
+              //console.log(ev);
+              $(this).hide();
+          });
     },
 
     onGetClick: function(ev) {

@@ -27,6 +27,8 @@
     background-repeat: no-repeat;
     margin-bottom: 5px;
     font-size: 14px;
+    width: 125px;
+    overflow: hidden;
 }
 
 .item_li {
