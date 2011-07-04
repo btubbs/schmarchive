@@ -29,8 +29,10 @@ Schmarchive2 = {
     infoPath: '/info/',
     invPath: '/inv/',
     givePath: '/give/',
+    cssPath: '/css/',
     itemTmpl: '#item_tmpl',
     titleTmpl: '#title_tmpl',
+    cssTmpl: '#css_tmpl',
     titleContainer: '#title',
     getButton: '.get',
     filters: '#filters a',
@@ -41,6 +43,9 @@ Schmarchive2 = {
               this.av = qParam('av');
               this.tok = qParam('tok');
 
+              // add a link to remote css
+              var css_url = this.buildURL(this.cssPath);
+              $(this.cssTmpl).tmpl({url: css_url}).appendTo('head');
               // set up click handler for the "get" buttons
               var click_data = {
                   widget: this
