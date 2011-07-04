@@ -121,7 +121,6 @@ Schmarchive2 = {
       // hide broken images (any SL image with alpha in it will have no
       // search.secondlife.com thumbnail)
       $('img.thumb').error(function(ev) {
-              //console.log(ev);
               $(this).hide();
           });
       // call the isotope plugin on the frame
@@ -164,9 +163,7 @@ Schmarchive2 = {
             }
             
             var panestr = $.tmpl($(this.itemTmpl), item);
-            console.log(item);
             var res = $(this.frame).isotope('insert', panestr);
-            console.log(res);
             var pane = $('.inv_item').last();
             pane.data('info', item);
         } else {
@@ -180,7 +177,6 @@ Schmarchive2 = {
       // hide broken images (any SL image with alpha in it will have no
       // search.secondlife.com thumbnail)
       $('img.thumb').error(function(ev) {
-              //console.log(ev);
               $(this).hide();
           });
     },
@@ -222,6 +218,5 @@ Schmarchive2 = {
       $(this.titleTmpl).tmpl(info).appendTo(this.titleContainer);
       // update the actual page title
       $.tmpl('<title>${objname}</title>', info).appendTo('head');
-      console.log(info);
     }
 };
