@@ -1,10 +1,12 @@
 .inv_item {
   border: 10px solid #151515;
-  /*min-width: 100px;*/
-  /*min-height: 100px;*/
   background: #2e2e2e;
   padding: 5px;
   width: 150px;
+}
+
+.inv_shade {
+  box-shadow: 1px 1px 5px black;
 }
 
 .inv_item.about {
